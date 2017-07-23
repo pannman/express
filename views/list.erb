@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>最寄り駅リスト</title>
+	<style>
+    body{
+        background-color:#2EFEF7;
+        text-align:center;
+    }
+    .hed{
+    	height:50px;
+    	background-color:green;
+    }
+    .had2{
+    	padding:10px;
+    }
+    
+    body {
+    	margin: 0;
+    }
+</style>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+</head>
+<body>
+	<form action="list" method="get" class ="hed">
+		<div class ="had2">
+        <input type= "text" name="x" id="x" placeholder="x" />
+        <input type= "text" name="y" id="y" placeholder="y" />
+        <input type="submit" value="検索" />
+        </div>
+    </form>
+     <table>
+	  <% @stations.each do |station| %>
+		<tr class="station">
+			<td class="line"><%= station["line"] %></td>
+			<td class="name"><a href="https://www.google.co.jp/maps/@<%= params[:y] %>,<%= params[:x] %>"><%= station["name"] %></a></td>
+		</tr>
+	  <% end%>
+		
+	</table>
+	
+	<div id="detail">
+		<h2>次の駅</h2>
+		<dev class="next"></dev>
+	</div>
+	<div id ="datail2">
+		<h2>前の駅</h2>
+		<dev class="next2"></dev>
+	</div>
+	<script>
+		window.onload = function() {
+			$(".station").click(function() {
+			  var line = $(".line",this).text();
+			  var name = $(".name",this).text();
+			  $.ajax( "/api/station", {
+			  	type: "GET",
+			  	data: {"line": line, "name": name},
+			  	datatype: 'json'
+			  })
+			  .done(function(json) {
+			  	$("#detail .next").text(json["next"]),
+			  	$("#detail2 .next2").text(json["prev"])
+			  });
+			});
+		}
+		
+	
+		
+	</script>
+
+</body>
+</html>
